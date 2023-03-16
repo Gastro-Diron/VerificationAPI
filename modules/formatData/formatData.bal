@@ -1,11 +1,19 @@
 public function formatdata (int|string|decimal name, int|string|decimal email) returns json{
+    
+    string actualEmail;
+    if email is string {
+        actualEmail = email;
+    } else {
+        actualEmail = "DEFAULT";
+    }
+
     json data = {
                     "schemas": [],
                     "name": {
                         "givenName": name,
                         "familyName": "Berry"
                     },
-                    "userName": "DEFAULT/kim@gmail.com",
+                    "userName": "DEFAULT/"+actualEmail,
                     "password": "aBcd!23",
                     "emails": [
                         {
