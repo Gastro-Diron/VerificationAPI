@@ -1,10 +1,10 @@
-//import VerificationAPI.formatData;
+import VerificationAPI.formatData;
 import ballerina/http;
 //import ballerinax/googleapis.sheets;
 //import VerificationAPI.googleSheets;
 import VerificationAPI.fileAccess;
 
-http:Client Register = check new ("api.asgardeo.io/t/orgwso2/scim2/Users");
+http:Client Register = check new ("https://api.asgardeo.io/t/orgwso2/scim2", httpVersion = http:HTTP_1_1);
 
 service / on new http:Listener (9091){
 
@@ -41,14 +41,15 @@ service / on new http:Listener (9091){
                 error? addToStore = check fileAccess:saveData(userClaims,email+"perm");
                 //sheets:Row data = check googleSheets:getData();
                 //json Msg = formatData:formatdata(data.values[2],data.values[1]);
-                //http:Response|http:ClientError postData = check Register->post(path = "", message = Msg, headers = {"Authorization": "Bearer 8b5f2db9-dab2-3848-99cc-e3b636dd0b56", "Content-Type": "application/scim+json"});
-                // if postData is http:Response {
-                //     int num = postData.statusCode;
-                //     return "The code is correct"+num.toString();
-                // } else {
-                //     return "The code is correct but error in creating the user";
-                // }
-                return "The code is correct";
+                json Msg = formatData:formatdata("Tim Carter","timmy@gmail.com");
+                http:Response|http:ClientError postData = check Register->post(path = "/Users", message = Msg, headers = {"Authorization": "Bearer 8b5f2db9-dab2-3848-99cc-e3b636dd0b56", "Content-Type": "application/scim+json"});
+                if postData is http:Response {
+                    int num = postData.statusCode;
+                    return "The code is correct"+num.toString();
+                } else {
+                    return "The code is correct but error in creating the user";
+                }
+                //return "The code is correct";
 
             } else {
                 return "Invalid Code";
