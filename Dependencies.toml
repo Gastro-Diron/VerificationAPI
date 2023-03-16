@@ -318,6 +318,33 @@ modules = [
 ]
 
 [[package]]
+org = "ballerinax"
+name = "client.config"
+version = "1.0.1"
+dependencies = [
+	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "oauth2"}
+]
+
+[[package]]
+org = "ballerinax"
+name = "googleapis.sheets"
+version = "3.2.0"
+dependencies = [
+	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.array"},
+	{org = "ballerina", name = "lang.int"},
+	{org = "ballerina", name = "log"},
+	{org = "ballerina", name = "os"},
+	{org = "ballerina", name = "regex"},
+	{org = "ballerinax", name = "client.config"}
+]
+modules = [
+	{org = "ballerinax", packageName = "googleapis.sheets", moduleName = "googleapis.sheets"}
+]
+
+[[package]]
 org = "gastro"
 name = "VerificationAPI"
 version = "0.1.0"
@@ -326,13 +353,16 @@ dependencies = [
 	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "random"},
-	{org = "ballerinai", name = "observe"}
+	{org = "ballerinai", name = "observe"},
+	{org = "ballerinax", name = "googleapis.sheets"}
 ]
 modules = [
 	{org = "gastro", packageName = "VerificationAPI", moduleName = "VerificationAPI"},
 	{org = "gastro", packageName = "VerificationAPI", moduleName = "VerificationAPI.codeGen"},
 	{org = "gastro", packageName = "VerificationAPI", moduleName = "VerificationAPI.email"},
-	{org = "gastro", packageName = "VerificationAPI", moduleName = "VerificationAPI.fileAccess"}
+	{org = "gastro", packageName = "VerificationAPI", moduleName = "VerificationAPI.fileAccess"},
+	{org = "gastro", packageName = "VerificationAPI", moduleName = "VerificationAPI.formatData"},
+	{org = "gastro", packageName = "VerificationAPI", moduleName = "VerificationAPI.googleSheets"}
 ]
 
 

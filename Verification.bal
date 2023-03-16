@@ -1,5 +1,10 @@
+//import VerificationAPI.formatData;
 import ballerina/http;
-//import VerificationAPI.fileAccess;
+//import ballerinax/googleapis.sheets;
+//import VerificationAPI.googleSheets;
+import VerificationAPI.fileAccess;
+
+http:Client Register = check new ("api.asgardeo.io/t/orgwso2/scim2/Users");
 
 service / on new http:Listener (9091){
 
@@ -23,7 +28,7 @@ service / on new http:Listener (9091){
     }
 
     resource function get verify/[string email] () returns string|InvalidEmailError|VerifyEntry?|error {
-        //json userClaims = check fileAccess:readData(email);
+        json userClaims = check fileAccess:readData(email);
         VerifyEntry? verifyEntry = verifyTable[email];
         if verifyEntry is () {
             return {
@@ -33,8 +38,18 @@ service / on new http:Listener (9091){
             };
         } else{
             if verifyEntry.code is "1234" {
-                //error? addToStore = check fileAccess:saveData(userClaims,email+"perm");
+                error? addToStore = check fileAccess:saveData(userClaims,email+"perm");
+                //sheets:Row data = check googleSheets:getData();
+                //json Msg = formatData:formatdata(data.values[2],data.values[1]);
+                //http:Response|http:ClientError postData = check Register->post(path = "", message = Msg, headers = {"Authorization": "Bearer 8b5f2db9-dab2-3848-99cc-e3b636dd0b56", "Content-Type": "application/scim+json"});
+                // if postData is http:Response {
+                //     int num = postData.statusCode;
+                //     return "The code is correct"+num.toString();
+                // } else {
+                //     return "The code is correct but error in creating the user";
+                // }
                 return "The code is correct";
+
             } else {
                 return "Invalid Code";
             }
