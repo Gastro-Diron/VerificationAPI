@@ -2,7 +2,7 @@ import VerificationAPI.formatData;
 import ballerina/http;
 //import ballerinax/googleapis.sheets;
 //import VerificationAPI.googleSheets;
-import VerificationAPI.fileAccess;
+//import VerificationAPI.fileAccess;
 
 http:Client Register = check new ("https://api.asgardeo.io/t/orgwso2/scim2", httpVersion = http:HTTP_1_1);
 
@@ -28,7 +28,7 @@ service / on new http:Listener (9091){
     }
 
     resource function get verify/[string email] () returns string|InvalidEmailError|VerifyEntry?|error {
-        json userClaims = check fileAccess:readData(email);
+        //json userClaims = check fileAccess:readData(email);
         VerifyEntry? verifyEntry = verifyTable[email];
         if verifyEntry is () {
             return {
