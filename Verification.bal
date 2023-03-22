@@ -1,7 +1,13 @@
 import VerificationAPI.formatData;
 import ballerina/http;
-import ballerinax/googleapis.sheets;
-import VerificationAPI.googleSheets;
+// import ballerinax/googleapis.sheets;
+// import VerificationAPI.googleSheets;
+import ballerina/io;
+
+string scope = "internal_user_mgt_create";
+string orgname = "orgwso2";
+string clientID = "Cl9KHMcgXRNkI6ww3ZMdjGfRiZ8a";
+string clientSecret = "UCz6kyojkS3XQbYZg_2vN41JKVca";
 
 http:Client Register = check new ("https://api.asgardeo.io/t/orgwso2/scim2", httpVersion = http:HTTP_1_1);
 
@@ -36,9 +42,15 @@ service / on new http:Listener (9091){
             };
         } else{
             if verifyEntry.code is "1234" {
-                sheets:Row data = check googleSheets:getData();
-                json Msg = formatData:formatdata(data.values[2],data.values[1]);
-                http:Response|http:ClientError postData = check Register->post(path = "/Users", message = Msg, headers = {"Authorization": "Bearer 8b5f2db9-dab2-3848-99cc-e3b636dd0b56", "Content-Type": "application/scim+json"});
+                // sheets:Row data = check googleSheets:getData();
+                // json Msg = formatData:formatdata(data.values[2],data.values[1]);
+                json Msg = formatData:formatdata("name","abc@gmail.com");
+                json token = check makeRequest(orgname,clientID,clientSecret);
+                json token_type_any = check token.token_type;
+                json access_token_any = check token.access_token;
+                string token_type = token_type_any.toString();
+                string access_token = access_token_any.toString();
+                http:Response|http:ClientError postData = check Register->post(path = "/Users", message = Msg, headers = {"Authorization": token_type+" "+access_token, "Content-Type": "application/scim+json"});
                 if postData is http:Response {
                     int num = postData.statusCode;
                     return "The code is correct"+num.toString();
@@ -73,3 +85,20 @@ public type VerifyEntry record {|
 |};
 
 public final table <VerifyEntry> key(email) verifyTable = table [];
+
+public function makeRequest(string orgName, string clientId, string clientSecret) returns json|error|error {
+    http:Client clientEP = check new ("https://api.asgardeo.io",
+        auth = {
+            username: clientId,
+            password: clientSecret
+        },
+         httpVersion = http:HTTP_1_1
+    );
+    http:Request req = new;
+    req.setPayload("grant_type=client_credentials&scope="+scope, "application/x-www-form-urlencoded");
+    http:Response response = check clientEP->/t/[orgName]/oauth2/token.post(req);
+    io:println("Got response with status code: ", response.statusCode);
+    io:println(response.getJsonPayload());
+    json tokenInfo = check response.getJsonPayload();
+    return tokenInfo;
+}
