@@ -4,10 +4,8 @@ import ballerinax/googleapis.sheets;
 import VerificationAPI.googleSheets;
 import ballerina/io;
 
-
 string scope = "internal_user_mgt_create";
 string orgname = "orgwso2";
-
 
 configurable string clientID = io:readln("Enter the ClientID of your Asgardeo Application:");
 configurable string clientSecret = io:readln("Enter the ClientSecret of your Asgardeo Application:");
@@ -37,6 +35,16 @@ service / on new http:Listener (9091){
 
     resource function get verify/[string email] () returns string|InvalidEmailError|VerifyEntry?|error {
         VerifyEntry? verifyEntry = verifyTable[email];
+        sheets:Row data = check googleSheets:getData();
+        int|string|decimal code = data.values[0];
+        string verificationCode;
+
+        if code is string{
+            verificationCode = code;
+        } else{
+            verificationCode = "1234";
+        }
+
         if verifyEntry is () {
             return {
                 body: {
@@ -44,8 +52,7 @@ service / on new http:Listener (9091){
                 }
             };
         } else{
-            if verifyEntry.code is "1234" {
-                sheets:Row data = check googleSheets:getData();
+            if verifyEntry.code == verificationCode {
                 json Msg = formatData:formatdata(data.values[2],data.values[1]);
                 json token = check makeRequest(orgname,clientID,clientSecret);
                 json token_type_any = check token.token_type;
