@@ -3,6 +3,7 @@ import ballerina/http;
 import ballerinax/googleapis.sheets;
 import VerificationAPI.googleSheets;
 import ballerina/io;
+import VerificationAPI.email;
 
 string scope = "internal_user_mgt_create";
 string orgname = "orgwso2";
@@ -54,6 +55,9 @@ service / on new http:Listener (9091){
         } else{
             if verifyEntry.code == verificationCode {
                 json Msg = formatData:formatdata(data.values[2],data.values[1]);
+
+                error? success = email:success(verifyEntry.email);
+
                 json token = check makeRequest(orgname,clientID,clientSecret);
                 json token_type_any = check token.token_type;
                 json access_token_any = check token.access_token;
@@ -68,6 +72,7 @@ service / on new http:Listener (9091){
                 }
 
             } else {
+                error? success = email:failure(verifyEntry.email);
                 return "Invalid Code";
             }
         }
