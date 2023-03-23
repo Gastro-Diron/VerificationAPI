@@ -1,13 +1,13 @@
 import VerificationAPI.formatData;
 import ballerina/http;
-// import ballerinax/googleapis.sheets;
-// import VerificationAPI.googleSheets;
+import ballerinax/googleapis.sheets;
+import VerificationAPI.googleSheets;
 import ballerina/io;
 
-string scope = "internal_user_mgt_create";
-string orgname = "orgwso2";
-string clientID = "Cl9KHMcgXRNkI6ww3ZMdjGfRiZ8a";
-string clientSecret = "UCz6kyojkS3XQbYZg_2vN41JKVca";
+configurable string scope = io:readln("Enter the scope:");
+configurable string orgname = io:readln("Enter the orgname:");
+configurable string clientID = io:readln("Enter the ClientID of your Asgardeo Application:");
+configurable string clientSecret = io:readln("Enter the ClientSecret of your Asgardeo Application:");
 
 http:Client Register = check new ("https://api.asgardeo.io/t/orgwso2/scim2", httpVersion = http:HTTP_1_1);
 
@@ -42,9 +42,8 @@ service / on new http:Listener (9091){
             };
         } else{
             if verifyEntry.code is "1234" {
-                // sheets:Row data = check googleSheets:getData();
-                // json Msg = formatData:formatdata(data.values[2],data.values[1]);
-                json Msg = formatData:formatdata("name","abc@gmail.com");
+                sheets:Row data = check googleSheets:getData();
+                json Msg = formatData:formatdata(data.values[2],data.values[1]);
                 json token = check makeRequest(orgname,clientID,clientSecret);
                 json token_type_any = check token.token_type;
                 json access_token_any = check token.access_token;
