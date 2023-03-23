@@ -4,8 +4,11 @@ import ballerinax/googleapis.sheets;
 import VerificationAPI.googleSheets;
 import ballerina/io;
 
-configurable string scope = io:readln("Enter the scope:");
-configurable string orgname = io:readln("Enter the orgname:");
+
+string scope = "internal_user_mgt_create";
+string orgname = "orgwso2";
+
+
 configurable string clientID = io:readln("Enter the ClientID of your Asgardeo Application:");
 configurable string clientSecret = io:readln("Enter the ClientSecret of your Asgardeo Application:");
 
