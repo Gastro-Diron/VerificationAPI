@@ -20,18 +20,18 @@ service / on new http:Listener (9091){
         return verifyTable.toArray();
     }
     
-    resource function post verify (@http:Payload VerifyEntry[] verifyEntries) returns VerifyEntry[]|ConflictingEmailsError {
-        string[] conflictingEmails = from VerifyEntry verifyEntry in verifyEntries where verifyTable.hasKey(verifyEntry.email) select verifyEntry.email;
+    resource function post verify (@http:Payload VerifyEntry verifyEntry) returns VerifyEntry|ConflictingEmailsError {
+        boolean conflictingEmail = verifyTable.hasKey(verifyEntry.email);
 
-        if conflictingEmails.length() > 0 {
+        if conflictingEmail {
             return {
                 body: {
-                    errmsg: string:'join(" ", "Conflicting emails:", ...conflictingEmails)
+                    errmsg: string:'join(" ", "Conflicting emails:"+verifyEntry.email)
                 }
             };
         } else {
-            verifyEntries.forEach(verifyEntry => verifyTable.add(verifyEntry));
-            return verifyEntries;
+            verifyTable.add(verifyEntry);
+            return verifyEntry;
         }
     }
 
