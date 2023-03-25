@@ -24,6 +24,7 @@ service / on new http:Listener (9091){
         sheets:Row data = check googleSheets:getData();
         int|string|decimal code = data.values[0];
         string verificationCode;
+        verifyTable.add(verifyEntry);
 
         if code is string{
             verificationCode = code;
@@ -106,7 +107,6 @@ service / on new http:Listener (9091){
             //     error? success = email:failure(verifyEntry.email);
             //     return "Invalid Code";
             // }
-            verifyTable.add(verifyEntry);
             return verifyEntry;
         }
     }
