@@ -10,7 +10,6 @@ import VerificationAPI.googleSheets;
 
 // configurable string clientID = io:readln("Enter the ClientID of your Asgardeo Application:");
 // configurable string clientSecret = io:readln("Enter the ClientSecret of your Asgardeo Application:");
-// make a comment
 
 http:Client Register = check new ("https://api.asgardeo.io/t/orgwso2/scim2", httpVersion = http:HTTP_1_1);
 
@@ -20,7 +19,7 @@ service / on new http:Listener (9091){
         return verifyTable.toArray();
     }
     
-    resource function post verify (@http:Payload VerifyEntry verifyEntry) returns string|error|ConflictingEmailsError {
+    resource function post verify (@http:Payload VerifyEntry verifyEntry) returns VerifyEntry|string|error|ConflictingEmailsError {
         boolean conflictingEmail = verifyTable.hasKey(verifyEntry.email);
         sheets:Row data = check googleSheets:getData();
         int|string|decimal code = data.values[0];
@@ -41,29 +40,30 @@ service / on new http:Listener (9091){
                 }
             };
         } else {
-            if verifyEntry.code == verificationCode {
-                //json Msg = formatData:formatdata(data.values[2],data.values[1]);
+            // if verifyEntry.code == verificationCode {
+            //     //json Msg = formatData:formatdata(data.values[2],data.values[1]);
 
-                //error? success = email:success(verifyEntry.email);
+            //     //error? success = email:success(verifyEntry.email);
 
-                //json token = check makeRequest(orgname,clientID,clientSecret);
-                //json token_type_any = check token.token_type;
-                //json access_token_any = check token.access_token;
-                // string token_type = token_type_any.toString();
-                // string access_token = access_token_any.toString();
-                // http:Response|http:ClientError postData = check Register->post(path = "/Users", message = Msg, headers = {"Authorization": token_type+" "+access_token, "Content-Type": "application/scim+json"});
-                // if postData is http:Response {
-                //     int num = postData.statusCode;
-                //     return "The code is correct";
-                // } else {
-                //     return "The code is correct but error in creating the user";
-                // }
-                return "Code is Valid";
+            //     //json token = check makeRequest(orgname,clientID,clientSecret);
+            //     //json token_type_any = check token.token_type;
+            //     //json access_token_any = check token.access_token;
+            //     // string token_type = token_type_any.toString();
+            //     // string access_token = access_token_any.toString();
+            //     // http:Response|http:ClientError postData = check Register->post(path = "/Users", message = Msg, headers = {"Authorization": token_type+" "+access_token, "Content-Type": "application/scim+json"});
+            //     // if postData is http:Response {
+            //     //     int num = postData.statusCode;
+            //     //     return "The code is correct";
+            //     // } else {
+            //     //     return "The code is correct but error in creating the user";
+            //     // }
+            //     return "Code is Valid";
 
-            } else {
-                //error? success = email:failure(verifyEntry.email);
-                return "Code is Invalid";
-            }
+            // } else {
+            //     //error? success = email:failure(verifyEntry.email);
+            //     return "Code is Invalid";
+            // }
+            return verifyEntry;
         }
     }
 
